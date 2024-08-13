@@ -50,7 +50,7 @@ public class SecurityConfiguration {
         http.csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(STATELESS))
                 .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
-                        .requestMatchers("/auth/login", "/auth/registration", "/auth/registration/server", "/auth/authorization/server").permitAll()
+                        .requestMatchers("/auth/login", "/auth/registration", "/auth/registration/server", "/auth/authorization/server", "/auth/authorization/user").permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .accessDeniedHandler(jwtAccessDeniedHandler)

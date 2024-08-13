@@ -20,9 +20,10 @@ public class SecurityClientImpl implements SecurityClient{
     @Override
     public AuthorizationResponseDTO authorization(AuthorizationRequestDTO authorizationRequestDTO) {
         AuthorizationResponseDTO result = webClient.post()
-                .uri("http://localhost:8080/auth/authorization")
+                .uri("http://localhost:8080/auth/authorization/user")
                 .bodyValue(authorizationRequestDTO)
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + authorizationRequestDTO.getServiceToken())
                 .retrieve()
                 .bodyToMono(AuthorizationResponseDTO.class)
                 .block();

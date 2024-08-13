@@ -5,7 +5,7 @@ import com.pryalkin.Task.dto.request.AuthorizationRequestDTO;
 
 public interface AuthService {
 
-    void authorization(AuthServerRequestDTO authServerRequestDTO);
+    String authorization(AuthServerRequestDTO authServerRequestDTO);
     void registration();
 
     String getToken();

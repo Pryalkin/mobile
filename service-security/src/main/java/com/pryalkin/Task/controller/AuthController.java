@@ -12,6 +12,7 @@ import com.pryalkin.Task.exception.ExceptionHandling;
 import com.pryalkin.Task.exception.model.PasswordException;
 import com.pryalkin.Task.exception.model.UsernameExistException;
 import com.pryalkin.Task.model.Server;
+import com.pryalkin.Task.model.ServerPrincipal;
 import com.pryalkin.Task.model.User;
 import com.pryalkin.Task.model.UserPrincipal;
 import com.pryalkin.Task.service.AuthService;
@@ -54,7 +55,6 @@ public class AuthController extends ExceptionHandling {
 
     @PostMapping("/login")
     public ResponseEntity<UserResponseDTO> login(@RequestBody UserRequestDTO userRequestDTO) throws UsernameExistException {
-        System.out.println("LOGIN USER");
         authenticate(userRequestDTO.getUsername(), userRequestDTO.getPassword());
         User loginUser = authService.findByUsername(userRequestDTO.getUsername());
         UserPrincipal userPrincipal = new UserPrincipal(loginUser);
@@ -63,11 +63,10 @@ public class AuthController extends ExceptionHandling {
         userResponseDTO.setUsername(loginUser.getUsername());
         userResponseDTO.setRole(loginUser.getRole());
         userResponseDTO.setAuthorities(loginUser.getAuthorities());
-        System.out.println("LOGIN USER22");
         return new ResponseEntity<>(userResponseDTO, jwtHeader, OK);
     }
 
-    @PostMapping("/authorization")
+    @PostMapping("/authorization/user")
     public ResponseEntity<AuthorizationResponseDTO> authorization(@RequestBody AuthorizationRequestDTO authorizationRequestDTO) throws UsernameExistException {
         AuthorizationResponseDTO responseDTO = new AuthorizationResponseDTO();
         responseDTO.setResult(true);
@@ -77,14 +76,10 @@ public class AuthController extends ExceptionHandling {
 
     @PostMapping("/authorization/server")
     public AuthServerResponseDTO authorizationServer(@RequestBody AuthServerRequestDTO authServerRequestDTO) throws UsernameExistException {
-        System.out.println("/authorization/server");
         AuthServerResponseDTO responseDTO = new AuthServerResponseDTO();
         authenticate(authServerRequestDTO.getServerName(), authServerRequestDTO.getServerPassword());
-        System.out.println("NEN NEN NEN");
         Server loginServer = authService.findByServerName(authServerRequestDTO.getServerName());
-        System.out.println("NEN2 NEN2 NEN2");
-        responseDTO.setToken(jwtTokenProvider.generateJwtTokenForServer(loginServer));
-        System.out.println(responseDTO);
+        responseDTO.setToken(jwtTokenProvider.generateJwtTokenForServer(new ServerPrincipal(loginServer)));
         return responseDTO;
     }
 

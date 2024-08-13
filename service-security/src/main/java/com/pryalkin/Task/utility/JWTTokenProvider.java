@@ -5,6 +5,7 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.pryalkin.Task.model.Server;
+import com.pryalkin.Task.model.ServerPrincipal;
 import com.pryalkin.Task.model.UserPrincipal;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -44,12 +45,14 @@ public class JWTTokenProvider {
         return token;
     }
 
-    public String generateJwtTokenForServer(Server server){
+    public String generateJwtTokenForServer(ServerPrincipal server){
+        String[] claims = getClaimsFromServer(server);
         String token = JWT.create()
                 .withIssuer(BUG_LLC)
                 .withAudience(BUG_ADMINISTRATION)
                 .withIssuedAt(new Date())
-                .withSubject(server.getServerName())
+                .withSubject(server.getUsername())
+                .withArrayClaim(AUTHORITIES, claims)
                 .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .sign(Algorithm.HMAC512(secret.getBytes()));
         log.info(token);
@@ -103,4 +106,12 @@ public class JWTTokenProvider {
         return userPrincipal.getAuthorities().stream().map((auth)-> auth.getAuthority()).toArray(String[]::new);
     }
 
+    private String[] getClaimsFromServer(ServerPrincipal serverPrincipal) {
+        return serverPrincipal.getAuthorities().stream().map((auth)-> auth.getAuthority()).toArray(String[]::new);
+    }
+
+    public List<GrantedAuthority> getAuthoritiesServer(String token) {
+        String[] claims = getClaimsFromToken(token);
+        return Arrays.stream(claims).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+    }
 }

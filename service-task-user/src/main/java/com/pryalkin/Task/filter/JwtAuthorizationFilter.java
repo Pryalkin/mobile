@@ -9,6 +9,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -22,11 +23,11 @@ import java.io.IOException;
 import java.util.List;
 
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     private final SecurityClient securityClient;
-    private AuthService authService;
+    private final AuthService authService;
     public static final String TOKEN_PREFIX = "Bearer ";
 
     @Override
@@ -57,6 +58,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         String token = authorizationHeader.substring(TOKEN_PREFIX.length());
         AuthorizationRequestDTO requestDTO = new AuthorizationRequestDTO();
         requestDTO.setUserToken(token);
+        System.out.println("TOKEN SERVER: " + authService.getToken());
         requestDTO.setServiceToken(authService.getToken());
         AuthorizationResponseDTO responseDTO = securityClient.authorization(requestDTO);
 
