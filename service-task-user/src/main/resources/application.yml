@@ -1,0 +1,25 @@
+server:
+  port: 8081
+
+app:
+  name: server-task-user
+  password: task-user-33
+  token: test
+
+spring:
+  application:
+    name: task-user
+  datasource:
+    url: jdbc:postgresql://localhost:5432/task_user
+    username: postgres
+    password: root
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        enable_lazy_load_no_trans: true
+      dialect: org.hibernate.dialect.PostgreSQL95Dialect
+    generate:
+      ddl-auto: true

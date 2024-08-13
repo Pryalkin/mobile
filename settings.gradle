@@ -1,0 +1,4 @@
+rootProject.name = 'Task-manager'
+include 'service-security'
+include 'service-task-user'
+include 'service-task-admin'

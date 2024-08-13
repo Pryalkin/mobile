@@ -1,0 +1,23 @@
+server:
+  port: 8080
+
+jwt:
+  secret: 'secret_key'
+
+spring:
+  application:
+    name: task-security
+  datasource:
+    url: jdbc:postgresql://localhost:5432/task_security
+    username: postgres
+    password: root
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        enable_lazy_load_no_trans: true
+      dialect: org.hibernate.dialect.PostgreSQL95Dialect
+    generate:
+      ddl-auto: true
