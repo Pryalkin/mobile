@@ -1,9 +1,7 @@
 package com.pryalkin.Task.exception;
 
-import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.pryalkin.Task.dto.response.HttpResponse;
-import com.pryalkin.Task.exception.model.PasswordException;
-import com.pryalkin.Task.exception.model.EmailExistException;
+import com.pryalkin.Task.exception.model.TaskDontExistException;
 import jakarta.persistence.NoResultException;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -14,7 +12,6 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.io.IOException;
@@ -26,13 +23,8 @@ import static org.springframework.http.HttpStatus.*;
 @RestControllerAdvice
 public class ExceptionHandling {
 
-    @ExceptionHandler(EmailExistException.class)
-    public ResponseEntity<HttpResponse> usernameExistException(EmailExistException exception) {
-        return createHttpResponse(BAD_REQUEST, exception.getMessage());
-    }
-
-    @ExceptionHandler(PasswordException.class)
-    public ResponseEntity<HttpResponse> passwordException(PasswordException exception) {
+    @ExceptionHandler(TaskDontExistException.class)
+    public ResponseEntity<HttpResponse> usernameExistException(TaskDontExistException exception) {
         return createHttpResponse(BAD_REQUEST, exception.getMessage());
     }
 
@@ -56,11 +48,6 @@ public class ExceptionHandling {
         return createHttpResponse(UNAUTHORIZED, ACCOUNT_LOCKED);
     }
 
-    @ExceptionHandler(TokenExpiredException.class)
-    public ResponseEntity<HttpResponse> tokenExpiredException(TokenExpiredException exception) {
-        return createHttpResponse(UNAUTHORIZED, exception.getMessage());
-    }
-
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<HttpResponse> methodNotSupportedException(HttpRequestMethodNotSupportedException exception) {
         HttpMethod supportedMethod = Objects.requireNonNull(exception.getSupportedHttpMethods()).iterator().next();
@@ -80,11 +67,6 @@ public class ExceptionHandling {
     @ExceptionHandler(IOException.class)
     public ResponseEntity<HttpResponse> iOException(IOException exception) {
         return createHttpResponse(INTERNAL_SERVER_ERROR, ERROR_PROCESSING_FILE);
-    }
-
-    @RequestMapping(ERROR_PATH)
-    public ResponseEntity<HttpResponse> notFound404() {
-        return createHttpResponse(NOT_FOUND, "There is no mapping for this URL");
     }
 
     private ResponseEntity<HttpResponse> createHttpResponse(HttpStatus httpStatus, String message) {

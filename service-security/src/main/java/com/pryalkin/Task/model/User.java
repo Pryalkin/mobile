@@ -16,9 +16,13 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @EqualsAndHashCode.Include
-    private String username;
+    private String email;
     @EqualsAndHashCode.Include
     private String password;
+    @EqualsAndHashCode.Include
+    private String name;
+    @EqualsAndHashCode.Include
+    private String surname;
     @EqualsAndHashCode.Include
     private String role;
     @EqualsAndHashCode.Include

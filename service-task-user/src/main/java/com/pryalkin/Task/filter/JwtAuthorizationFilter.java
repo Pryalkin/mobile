@@ -62,7 +62,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         requestDTO.setServiceToken(authService.getToken());
         AuthorizationResponseDTO responseDTO = securityClient.authorization(requestDTO);
 
-        SecurityContextHolder.clearContext();
+//        SecurityContextHolder.clearContext();
     }
 
 }

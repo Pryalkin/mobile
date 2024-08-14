@@ -2,9 +2,9 @@ package com.pryalkin.Task.enumeration;
 
 public enum Status {
 
-    IN_WAITING("В ожидании"),
-    IN_PROGRESS("В процессе"),
-    COMPLETED("Завершено");
+    IN_WAITING("В ОЖИДАНИИ"),
+    IN_PROGRESS("В ПРОЦЕССЕ"),
+    COMPLETED("ЗАВЕРШЕНО");
 
     private String status;
 

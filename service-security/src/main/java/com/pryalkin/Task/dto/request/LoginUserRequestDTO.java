@@ -1,14 +1,12 @@
 package com.pryalkin.Task.dto.request;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 @Data
-public class UserRequestDTO {
+public class LoginUserRequestDTO {
 
     private String email;
     private String password;
-    private String name;
-    private String surname;
+    private String password2;
 
 }

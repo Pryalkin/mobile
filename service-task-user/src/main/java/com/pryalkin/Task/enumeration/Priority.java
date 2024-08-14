@@ -2,9 +2,9 @@ package com.pryalkin.Task.enumeration;
 
 public enum Priority {
 
-    HIGH("Высокий"),
-    AVERAGE("Средний"),
-    SHORT("Низкий");
+    HIGH("ВЫСОКИЙ"),
+    AVERAGE("СРЕДНИЙ"),
+    SHORT("НИЗКИЙ");
 
     private String priority;
 

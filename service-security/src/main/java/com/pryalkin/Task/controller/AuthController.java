@@ -3,14 +3,17 @@ package com.pryalkin.Task.controller;
 import com.pryalkin.Task.constant.HttpAnswer;
 import com.pryalkin.Task.dto.request.AuthServerRequestDTO;
 import com.pryalkin.Task.dto.request.AuthorizationRequestDTO;
+import com.pryalkin.Task.dto.request.LoginUserRequestDTO;
 import com.pryalkin.Task.dto.request.UserRequestDTO;
 import com.pryalkin.Task.dto.response.AuthServerResponseDTO;
 import com.pryalkin.Task.dto.response.AuthorizationResponseDTO;
 import com.pryalkin.Task.dto.response.HttpResponse;
 import com.pryalkin.Task.dto.response.UserResponseDTO;
 import com.pryalkin.Task.exception.ExceptionHandling;
+import com.pryalkin.Task.exception.model.EmailDontExistException;
+import com.pryalkin.Task.exception.model.EmailValidException;
 import com.pryalkin.Task.exception.model.PasswordException;
-import com.pryalkin.Task.exception.model.UsernameExistException;
+import com.pryalkin.Task.exception.model.EmailExistException;
 import com.pryalkin.Task.model.Server;
 import com.pryalkin.Task.model.ServerPrincipal;
 import com.pryalkin.Task.model.User;
@@ -42,32 +45,35 @@ public class AuthController extends ExceptionHandling {
     private final JWTTokenProvider jwtTokenProvider;
 
     @PostMapping("/registration")
-    public ResponseEntity<HttpResponse> registration(@RequestBody UserRequestDTO userRequestDTO) throws UsernameExistException, PasswordException {
+    public ResponseEntity<HttpResponse> registration(@RequestBody UserRequestDTO userRequestDTO) throws EmailExistException, PasswordException, EmailValidException {
         authService.registration(userRequestDTO);
         return HttpAnswer.response(CREATED, USER_SUCCESSFULLY_REGISTERED);
     }
 
     @PostMapping("/registration/server")
-    public ResponseEntity<HttpResponse> registrationServer(@RequestBody AuthServerRequestDTO authServerRequestDTO) throws UsernameExistException, PasswordException {
+    public ResponseEntity<HttpResponse> registrationServer(@RequestBody AuthServerRequestDTO authServerRequestDTO) throws EmailExistException, PasswordException {
         authService.registrationServer(authServerRequestDTO);
         return HttpAnswer.response(CREATED, USER_SUCCESSFULLY_REGISTERED);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UserResponseDTO> login(@RequestBody UserRequestDTO userRequestDTO) throws UsernameExistException {
-        authenticate(userRequestDTO.getUsername(), userRequestDTO.getPassword());
-        User loginUser = authService.findByUsername(userRequestDTO.getUsername());
+    public ResponseEntity<UserResponseDTO> login(@RequestBody LoginUserRequestDTO userRequestDTO) throws EmailDontExistException, PasswordException {
+        authService.validateCheckPassword(userRequestDTO);
+        authenticate(userRequestDTO.getEmail(), userRequestDTO.getPassword());
+        User loginUser = authService.findByEmail(userRequestDTO.getEmail());
         UserPrincipal userPrincipal = new UserPrincipal(loginUser);
         HttpHeaders jwtHeader = getJwtHeader(userPrincipal);
         UserResponseDTO userResponseDTO = new UserResponseDTO();
-        userResponseDTO.setUsername(loginUser.getUsername());
+        userResponseDTO.setEmail(loginUser.getEmail());
+        userResponseDTO.setName(loginUser.getName());
+        userResponseDTO.setSurname(loginUser.getSurname());
         userResponseDTO.setRole(loginUser.getRole());
         userResponseDTO.setAuthorities(loginUser.getAuthorities());
         return new ResponseEntity<>(userResponseDTO, jwtHeader, OK);
     }
 
     @PostMapping("/authorization/user")
-    public ResponseEntity<AuthorizationResponseDTO> authorization(@RequestBody AuthorizationRequestDTO authorizationRequestDTO) throws UsernameExistException {
+    public ResponseEntity<AuthorizationResponseDTO> authorization(@RequestBody AuthorizationRequestDTO authorizationRequestDTO) throws EmailExistException {
         AuthorizationResponseDTO responseDTO = new AuthorizationResponseDTO();
         responseDTO.setResult(true);
         return new ResponseEntity<>(responseDTO, OK);
@@ -75,7 +81,7 @@ public class AuthController extends ExceptionHandling {
 
 
     @PostMapping("/authorization/server")
-    public AuthServerResponseDTO authorizationServer(@RequestBody AuthServerRequestDTO authServerRequestDTO) throws UsernameExistException {
+    public AuthServerResponseDTO authorizationServer(@RequestBody AuthServerRequestDTO authServerRequestDTO) throws EmailExistException {
         AuthServerResponseDTO responseDTO = new AuthServerResponseDTO();
         authenticate(authServerRequestDTO.getServerName(), authServerRequestDTO.getServerPassword());
         Server loginServer = authService.findByServerName(authServerRequestDTO.getServerName());

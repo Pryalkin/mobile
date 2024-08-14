@@ -1,10 +1,12 @@
-package com.pryalkin.Task.client;
+package com.pryalkin.Task.client.impl;
 
+import com.pryalkin.Task.client.SecurityClient;
 import com.pryalkin.Task.dto.request.AuthServerRequestDTO;
 import com.pryalkin.Task.dto.request.AuthorizationRequestDTO;
+import com.pryalkin.Task.dto.request.TokenRequestDTO;
 import com.pryalkin.Task.dto.response.AuthServerResponseDTO;
 import com.pryalkin.Task.dto.response.AuthorizationResponseDTO;
-import com.pryalkin.Task.dto.response.HttpResponse;
+import com.pryalkin.Task.dto.response.UserResponseDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -13,7 +15,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @Component
 @AllArgsConstructor
-public class SecurityClientImpl implements SecurityClient{
+public class SecurityClientImpl implements SecurityClient {
 
     private final WebClient webClient = WebClient.create();
 
@@ -38,6 +40,29 @@ public class SecurityClientImpl implements SecurityClient{
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .retrieve()
                 .bodyToMono(AuthServerResponseDTO.class)
+                .block();
+        return result;
+    }
+
+    @Override
+    public UserResponseDTO getUserWithToken(TokenRequestDTO tokenRequestDTO) {
+        UserResponseDTO result = webClient.post()
+                .uri("http://localhost:8080/task/user/token")
+                .bodyValue(tokenRequestDTO)
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .retrieve()
+                .bodyToMono(UserResponseDTO.class)
+                .block();
+        return result;
+    }
+
+    @Override
+    public UserResponseDTO getUserWithId(Long executorId) {
+        UserResponseDTO result = webClient.post()
+                .uri("http://localhost:8080/task/user/" + executorId)
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .retrieve()
+                .bodyToMono(UserResponseDTO.class)
                 .block();
         return result;
     }
