@@ -14,8 +14,8 @@ public interface SecurityClient {
 
     AuthServerResponseDTO authorizationServer(AuthServerRequestDTO authServerRequestDTO);
     AuthServerResponseDTO registrationServer(AuthServerRequestDTO authServerRequestDTO);
-    UserResponseDTO getUserWithToken(TokenRequestDTO tokenRequestDTO);
+    UserResponseDTO getUserWithToken(TokenRequestDTO tokenRequestDTO, String token);
 
 
-    UserResponseDTO getUserWithId(Long executorId);
+    UserResponseDTO getUserWithId(Long executorId, String token);
 }

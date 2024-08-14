@@ -45,11 +45,12 @@ public class SecurityClientImpl implements SecurityClient {
     }
 
     @Override
-    public UserResponseDTO getUserWithToken(TokenRequestDTO tokenRequestDTO) {
+    public UserResponseDTO getUserWithToken(TokenRequestDTO tokenRequestDTO, String token) {
         UserResponseDTO result = webClient.post()
                 .uri("http://localhost:8080/task/user/token")
                 .bodyValue(tokenRequestDTO)
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .retrieve()
                 .bodyToMono(UserResponseDTO.class)
                 .block();
@@ -57,10 +58,11 @@ public class SecurityClientImpl implements SecurityClient {
     }
 
     @Override
-    public UserResponseDTO getUserWithId(Long executorId) {
+    public UserResponseDTO getUserWithId(Long executorId, String token) {
         UserResponseDTO result = webClient.post()
                 .uri("http://localhost:8080/task/user/" + executorId)
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .retrieve()
                 .bodyToMono(UserResponseDTO.class)
                 .block();
